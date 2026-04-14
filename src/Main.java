@@ -1,6 +1,6 @@
 public class Main {
     public static void main(String[] args) {
-
+        BiuroUbezpieczen biuro = new BiuroUbezpieczen("Secure Future");
 
         Polisa p1 = new Polisa("CAR-111", "Anna Nowak", 900.0, 3, 9000.0, true, true);
         Polisa p2 = new Polisa("CAR-654", "Piotr Lis", 840.0, 4, 32000.0, false, false);
@@ -17,7 +17,7 @@ public class Main {
         System.out.println("Liczba utworzonych polis: " + Polisa.pobierzLiczbeUtworzonychPolis());
 
         System.out.println(p1.pobierzPodsumowanieRyzyka());
-        System.out.println("Prognoza odnowienia dla p1: " + p1.obliczSkladkeOdnowieniowa());
+        System.out.println("Prognoza odnowienia dla p1: " + p1.obliczSkladkeOdnowienia());
         System.out.println(p1.equals(new Polisa("CAR-101", "Inny klient", 700.0, 1, 30000.0, false, false)));
         System.out.println(p2);
 
