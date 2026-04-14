@@ -1,3 +1,5 @@
+import java.util.Objects;
+
 public class Polisa {
     private String numerPolisy;
     private String klient;
@@ -10,7 +12,7 @@ public class Polisa {
     private static final double OPLATA_ADMINISTRACYJNA = 100.0;
 
 
-    public Polisa(String numerPolisy, String klient, double skladkaBazowa, int poziomRyzyka, double wartoscPojazdu,boolean czyMaAlarm, boolean czyBezszkodowyKlient ) {
+    public Polisa(String numerPolisy, String klient, double skladkaBazowa, int poziomRyzyka, double wartoscPojazdu, boolean czyMaAlarm, boolean czyBezszkodowyKlient) {
         this.numerPolisy = numerPolisy;
         this.klient = klient;
         this.skladkaBazowa = skladkaBazowa;
@@ -22,35 +24,77 @@ public class Polisa {
 
     }
 
+    public String getNumerPolisy() {
+        return numerPolisy;
 
-    public void printPolisa() {
-    System.out.println("Polisa: " + numerPolisy);
-    System.out.println("Klient: " + klient);
-    System.out.println("Skladka bazowa: " + skladkaBazowa);
-    System.out.println("Poziom Ryzyka: " + poziomRyzyka);
-    System.out.println("Wartosc Pojazd: " + wartoscPojazdu);
-    System.out.println("Czy ma alarm: " + czyMaAlarm);
-    System.out.println("Czy bezszkodowy klient: " + czyBezszkodowyKlient);
+
     }
 
-    public static void printliczbaUtworzonychPolis() {
-        System.out.println("Liczba utworzonych polis: " + liczbaUtworzonychPolis);
+    public double obliczSkladkeKoncowa() {
+        double skladka = skladkaBazowa + OPLATA_ADMINISTRACYJNA + poziomRyzyka * 120.0;
+        if (wartoscPojazdu > 40000) {
+            skladka = skladkaBazowa * 1.2;
+        }
+        if (czyMaAlarm == true) {
+            skladka = skladkaBazowa - (skladka * 0.1);
+        }
+        if (czyBezszkodowyKlient == true) {
+            skladka = skladkaBazowa - (skladka * 0.3);
+        }
+        return skladka;
     }
 
-    public double obliczSkladkeKoncowa(){
-        double skladkaKoncowa = skladkaBazowa + OPLATA_ADMINISTRACYJNA + poziomRyzyka*120.0;
-        if(wartoscPojazdu>40000){
-            skladkaKoncowa = skladkaBazowa*1.2;
+    public double obliczSkladkeOdnowienia() {
+        double baza = obliczSkladkeKoncowa();
+        double nowa = baza;
+        if (poziomRyzyka == 4) {
+            nowa *= 1.10;
         }
-        if(czyMaAlarm==true){
-            skladkaKoncowa = skladkaBazowa-(skladkaKoncowa*0.1);
+        else if (poziomRyzyka >= 5) {
+            nowa *= 1.20;
         }
-        if(czyBezszkodowyKlient==true){
-            skladkaKoncowa = skladkaBazowa-(skladkaKoncowa*0.3);
+        if (wartoscPojazdu > 50000) {
+            nowa += 400;
         }
-        return skladkaKoncowa;
-    }
-    public double obliczSkladkeOdnowienia(){
+        if (czyMaAlarm == true) {
+            nowa *= 0.92;
+        }
+        if (czyBezszkodowyKlient == true) {
+            nowa *= 0.85;
+        }
+        double minSkladka = baza * 0.9;
+        double maxSkladka = baza * 1.25;
 
+        if (nowa < minSkladka) {
+            nowa = minSkladka;
+        }
+        if (nowa > maxSkladka) {
+            nowa = maxSkladka;
+        }
+        return nowa;
+    }
+    public String pobierzPodsumowanieRyzyka() {
+        if (poziomRyzyka >= 4) {
+            return "Wysokie Ryzyko";
+        } else if (poziomRyzyka == 3) {
+            return "Srednie Ryzyko";
+        } else {
+            return "Niskie Ryzyko";
+        }
+    }
+
+    public static int pobierzLiczbeUtworzonychPolis() {
+        return liczbaUtworzonychPolis;
+    }
+
+    public String toString() {
+        return "Polisa: " + numerPolisy + ", klient: " + klient + ", skladkaKoncowa: " + obliczSkladkeKoncowa();
+    }
+
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Polisa)) return false;
+        Polisa polisa = (Polisa) o;
+        return Objects.equals(numerPolisy, polisa.numerPolisy);
     }
 }
